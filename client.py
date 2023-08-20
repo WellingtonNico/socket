@@ -48,7 +48,7 @@ send_message(client_socket, MESSAGE_TYPE_IDENTIFICATION, username)
 
 start_receive_thread(client_socket, "servidor")
 
-print("Pode começar enviar mensagens, use CTRL+c para parar:\n")
+print("Pode começar enviar mensagens, use CTRL+d ou CTRL+c para parar:\n")
 
 try:
     while True:

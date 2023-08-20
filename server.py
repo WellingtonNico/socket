@@ -120,7 +120,7 @@ while True:
     try:
         connectedClient: ConnectedClient = connected_clients[int(choice) - 1]
         print(
-            f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d .\n"
+            f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d ou CTRL+c .\n"
         )
 
         while True:
