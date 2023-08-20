@@ -29,8 +29,6 @@ while True:
 
         client_socket, client_address = server_socket.accept()
 
-        print("Conectado com: ", client_address)
-
         while True:
             data = client_socket.recv(1024 * 10)
             if not data:
@@ -39,7 +37,7 @@ while True:
             data = get_decoded_data(data)
             if data["message_type"] == MESSAGE_TYPE_IDENTIFICATION:
                 print(
-                    f'Usuário {data["message_data"]} identificato, iniciando recebimento de mensagens...'
+                    f'Usuário {data["message_data"]} identificado em {client_address}, iniciando recebimento de mensagens...'
                 )
                 start_receive_thread(client_socket, data["message_data"])
                 break
