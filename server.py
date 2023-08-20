@@ -11,6 +11,7 @@ from utils import (
     get_local_ip,
     send_message,
     start_receive_thread,
+    wait_input_and_send_messages,
 )
 import threading
 
@@ -25,7 +26,7 @@ server_socket.bind(address)
 
 server_socket.listen(5)
 
-is_socket_running = True
+is_socket_running = False
 
 connected_clients = []
 connected_clients_lock = threading.Lock()
@@ -49,6 +50,8 @@ def on_close_socket(client_socket: socket.socket):
 
 
 def wait_for_connections():
+    global is_socket_running
+    is_socket_running = True
     while True:
         try:
             print("Aguardando conexão...")
@@ -90,10 +93,10 @@ def wait_for_connections():
                         "Por gentileza, envie sua identificação",
                     )
         except Exception as e:
-            is_socket_running = False
             print("Encerrando servidor...")
             server_socket.close()
             break
+    is_socket_running = False
 
 
 wait_thread = threading.Thread(target=wait_for_connections)
@@ -114,23 +117,24 @@ while True:
     connected_client: ConnectedClient
 
     for index, connected_client in enumerate(connected_clients):
-        print(index + 1, f"\t -- \t{connected_client.username}")
+        print(
+            TextColor.get_text(
+                f"{index + 1}\t -- \t{connected_client.username}", TextColor.BLUE
+            ),
+        )
+
     print("\n")
     choice = input("digite um número: ")
     try:
         connectedClient: ConnectedClient = connected_clients[int(choice) - 1]
         print(
-            f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d ou CTRL+c .\n"
+            TextColor.get_text(
+                f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d ou CTRL+c .\n",
+                TextColor.MAGENTA,
+            )
         )
-
-        while True:
-            message = input()
-            clear_input_line()
-            if not message.strip():
-                continue
-            print(f"{TextColor.get_text('[você]',TextColor.CYAN)} - {message}")
-            connectedClient.send_message(message)
+        wait_input_and_send_messages(connectedClient.client_socket)
     except KeyboardInterrupt:
         continue
     except:
-        print("Escolha inválida!")
+        print(TextColor.get_text("Escolha inválida!", TextColor.RED))

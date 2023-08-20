@@ -9,6 +9,7 @@ from utils import (
     get_local_ip,
     send_message,
     start_receive_thread,
+    wait_input_and_send_messages,
 )
 
 def get_username():
@@ -51,13 +52,7 @@ start_receive_thread(client_socket, "servidor")
 print("Pode começar enviar mensagens, use CTRL+d ou CTRL+c para parar:\n")
 
 try:
-    while True:
-        message = input()
-        clear_input_line()
-        if not message.strip():
-            continue
-        print(f"{TextColor.get_text('[você]',TextColor.CYAN)} - {message}")
-        send_message(client_socket, MESSAGE_TYPE_STRING_DATA, message)
+    wait_input_and_send_messages(client_socket)
 except:
     pass
 

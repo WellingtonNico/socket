@@ -75,7 +75,11 @@ class ConnectedClient:
 def get_local_ip():
     hostname = socket.gethostname()
     ip_list = socket.getaddrinfo(hostname, None, socket.AF_INET)
-    local_ips = [ip[4][0] for ip in ip_list if ip[1] == socket.SOCK_STREAM and ip[4][0].startswith('192.168.1.')]
+    local_ips = [
+        ip[4][0]
+        for ip in ip_list
+        if ip[1] == socket.SOCK_STREAM and ip[4][0].startswith("192.168.1.")
+    ]
     return local_ips[0]
 
 
@@ -92,17 +96,33 @@ def get_decoded_message(data: bytes):
     return m.message_data
 
 
+def wait_input_and_send_messages(client_socket: socket.socket):
+    while True:
+        message = input()
+        clear_input_line()
+        if not message.strip():
+            continue
+        print(f"{TextColor.get_text('[você]',TextColor.CYAN)} - {message}")
+        send_message(client_socket, MESSAGE_TYPE_STRING_DATA, message)
+
+
 def receive_messages(client_socket: socket.socket, username: str, on_close=None):
     while True:
         try:
             data = client_socket.recv(1024)
             if not data:
-                print(TextColor.get_text(f"Encerrando conexão de {username}",TextColor.RED))
+                print(
+                    TextColor.get_text(
+                        f"Encerrando conexão de {username}", TextColor.RED
+                    )
+                )
                 client_socket.close()
                 if on_close is not None and callable(on_close):
                     on_close(client_socket)
                 break
-            print(f"{TextColor.get_text(f'[{username}]',TextColor.YELLOW)} - {get_decoded_message(data)}")
+            print(
+                f"{TextColor.get_text(f'[{username}]',TextColor.YELLOW)} - {get_decoded_message(data)}"
+            )
         except Exception as e:
             print("Erro: ", e)
             break
@@ -114,5 +134,3 @@ def start_receive_thread(client_socket: socket.socket, username: str, on_close=N
     )
     t.daemon = True
     t.start()
-
-
