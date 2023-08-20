@@ -6,8 +6,14 @@ from utils import MESSAGE_TYPE_IDENTIFICATION, MESSAGE_TYPE_STRING_DATA, PORT, g
 
 username = input('Digite seu nome de usuário:\n')
 
-server_ip = get_local_ip()[-1]  # Replace with the server's local IP address
-server_port = PORT         # Use the same port number as in the server code
+server_ip = get_local_ip()[-1]
+
+new_ip = input(f'Insira um endereço(padrão {server_ip})')
+
+if new_ip:
+    server_ip = new_ip
+
+server_port = PORT
 address = (server_ip, server_port)
 
 print('Endereço: ',address)
@@ -20,9 +26,12 @@ send_message(client_socket,MESSAGE_TYPE_IDENTIFICATION,username)
 
 start_receive_thread(client_socket,'servidor')
 
+print('Pode começar enviar mensagens:\n')
+
 try:
+
     while True:
-        message = input("Envie uma mensagem:\n")
+        message = input()
         send_message(client_socket,MESSAGE_TYPE_STRING_DATA,message)
         if message.lower() == 'exit':
             break

@@ -107,8 +107,12 @@ while True:
     choice = input("digite um número: ")
     try:
         connectedClient: ConnectedClient = connected_clients[int(choice) - 1]
-        print(f"Cliente {connectedClient.username} selecionado, envie uma mensagem:")
-        connectedClient.send_message(input())
+        print(f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d .\n")
 
+        while True:
+            message = input()
+            connectedClient.send_message(message)
+    except KeyboardInterrupt:
+        continue
     except:
         print("Escolha inválida!")
