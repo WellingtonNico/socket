@@ -30,7 +30,7 @@ is_socket_running = True
 connected_clients = []
 connected_clients_lock = threading.Lock()
 
-print("Socket ouvindo em: ", local_ip)
+print(TextColor.get_text(f"Socket ouvindo em: {local_ip}", TextColor.GREEN))
 
 
 def on_close_socket(client_socket: socket.socket):
@@ -39,7 +39,10 @@ def on_close_socket(client_socket: socket.socket):
         for index, connectedClient in enumerate(connected_clients):
             if connectedClient.client_socket == client_socket:
                 print(
-                    f"Cliente {connectedClient.username} removido dos clientes conectados."
+                    TextColor.get_text(
+                        f"Cliente {connectedClient.username} removido dos clientes conectados.",
+                        TextColor.MAGENTA,
+                    )
                 )
                 del connected_clients[index]
                 break
@@ -55,12 +58,19 @@ def wait_for_connections():
             while True:
                 data = client_socket.recv(1024 * 10)
                 if not data:
-                    print("Cliente saiu sem se identificar...")
+                    print(
+                        TextColor.get_text(
+                            "Cliente saiu sem se identificar...", TextColor.RED
+                        )
+                    )
                     client_socket.close()
                 message = get_decoded_data(data)
                 if message.is_identification:
                     print(
-                        f"Usuário {message.message_data} identificado em {client_address}, iniciando recebimento de mensagens..."
+                        TextColor.get_text(
+                            f"Usuário {message.message_data} identificado em {client_address}, iniciando recebimento de mensagens...",
+                            TextColor.GREEN,
+                        )
                     )
                     connected_clients.append(
                         ConnectedClient(
@@ -109,7 +119,9 @@ while True:
     choice = input("digite um número: ")
     try:
         connectedClient: ConnectedClient = connected_clients[int(choice) - 1]
-        print(f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d .\n")
+        print(
+            f"Cliente {connectedClient.username} selecionado, pode começar enviar mensagens. Para escolher outro use CTRL+d .\n"
+        )
 
         while True:
             message = input()

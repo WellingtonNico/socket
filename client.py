@@ -1,5 +1,4 @@
 import socket
-import threading
 
 from utils import (
     MESSAGE_TYPE_IDENTIFICATION,
@@ -12,12 +11,26 @@ from utils import (
     start_receive_thread,
 )
 
-
-username = input("Digite seu nome de usuário:\n")
+def get_username():
+    while True:
+        _username = input("Digite seu nome de usuário:\n")
+        if  len(_username.strip())>4:
+            return _username
+        print(TextColor.get_text('Nome de usuário inválido',TextColor.RED))
 
 server_ip = get_local_ip()[-1]
+def get_new_ip():
+    while True:
+        _server_ip = input(f"Insira um endereço(padrão {server_ip})")
+        if len(_server_ip) > 8:
+            return _server_ip
+        else:
+            return None
 
-new_ip = input(f"Insira um endereço(padrão {server_ip})")
+username = get_username()
+
+
+new_ip = get_new_ip()
 
 if new_ip:
     server_ip = new_ip
