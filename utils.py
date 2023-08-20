@@ -1,6 +1,7 @@
 import json
 import socket
 import threading
+from typing import Any
 
 PORT = 4040
 
@@ -31,15 +32,15 @@ def send_message(client_socket: socket.socket, message_type, message_data):
     )
 
 
-class ConnnectedClient:
+class ConnectedClient:
     client_socket: socket.socket
     username: str
-    client_address: socket._RetAddress
+    client_address: Any
 
     def __init__(
         self,
         client_socket: socket.socket,
-        client_address: socket._RetAddress,
+        client_address: Any,
         username: str,
     ) -> None:
         self.client_address = client_address
