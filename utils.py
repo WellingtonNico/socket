@@ -23,6 +23,33 @@ class MessageData:
         return self.message_type == MESSAGE_TYPE_IDENTIFICATION
 
 
+def send_message(client_socket: socket.socket, message_type, message_data):
+    client_socket.send(
+        json.dumps(
+            {"message_type": message_type, "message_data": message_data}
+        ).encode()
+    )
+
+
+class ConnnectedClient:
+    client_socket: socket.socket
+    username: str
+    client_address: socket._RetAddress
+
+    def __init__(
+        self,
+        client_socket: socket.socket,
+        client_address: socket._RetAddress,
+        username: str,
+    ) -> None:
+        self.client_address = client_address
+        self.client_socket = client_socket
+        self.username = username
+
+    def send_message(self, message_data: str):
+        send_message(self.client_socket, MESSAGE_TYPE_STRING_DATA, message_data)
+
+
 def get_local_ip():
     hostname = socket.gethostname()
     ip_list = socket.getaddrinfo(hostname, None, socket.AF_INET)
@@ -41,14 +68,6 @@ def get_decoded_data(data: bytes) -> MessageData:
 def get_decoded_message(data: bytes):
     m = get_decoded_data(data)
     return m.message_data
-
-
-def send_message(client_socket: socket.socket, message_type, message_data):
-    client_socket.send(
-        json.dumps(
-            {"message_type": message_type, "message_data": message_data}
-        ).encode()
-    )
 
 
 def receive_messages(client_socket: socket.socket, username: str):
