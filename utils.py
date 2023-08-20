@@ -38,7 +38,6 @@ class MessageData:
     def __init__(self, message_type, message_data) -> None:
         self.message_data = message_data
         self.message_type = message_type
-        pass
 
     @property
     def is_identification(self):
@@ -67,9 +66,6 @@ class ConnectedClient:
         self.client_address = client_address
         self.client_socket = client_socket
         self.username = username
-
-    def send_message(self, message_data: str):
-        send_message(self.client_socket, MESSAGE_TYPE_STRING_DATA, message_data)
 
 
 def get_local_ip():
