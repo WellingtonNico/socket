@@ -1,3 +1,4 @@
+import sys
 import json
 import socket
 import threading
@@ -8,6 +9,26 @@ PORT = 4040
 MESSAGE_TYPE_IDENTIFICATION = 0
 MESSAGE_TYPE_JSON_DATA = 1
 MESSAGE_TYPE_STRING_DATA = 2
+
+
+class TextColor:
+    BLACK = "\033[30m"
+    RED = "\033[31m"
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    BLUE = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN = "\033[36m"
+    WHITE = "\033[37m"
+    RESET = "\033[0m"
+
+    def get_text(text: str, color: str):
+        return f"{color}{text}{TextColor.RESET}"
+
+
+def clear_input_line():
+    sys.stdout.write("\033[F")  # Move cursor up one line
+    sys.stdout.write("\033[K")  # Clear line
 
 
 class MessageData:
@@ -71,23 +92,27 @@ def get_decoded_message(data: bytes):
     return m.message_data
 
 
-def receive_messages(client_socket: socket.socket, username: str,on_close):
+def receive_messages(client_socket: socket.socket, username: str, on_close):
     while True:
         try:
             data = client_socket.recv(1024)
             if not data:
-                print(f"Encerrando conexão de {username}")
+                print(TextColor.get_text(f"Encerrando conexão de {username}",TextColor.RED))
                 client_socket.close()
                 if on_close is not None and callable(on_close):
                     on_close(client_socket)
                 break
-            print(f"Mensagem de {username}: {get_decoded_message(data)}")
+            print(f"{TextColor.get_text(f'[{username}]',TextColor.YELLOW)} - {get_decoded_message(data)}")
         except Exception as e:
             print("Erro: ", e)
             break
 
 
-def start_receive_thread(client_socket: socket.socket, username: str,on_close=None):
-    t = threading.Thread(target=receive_messages, args=(client_socket, username,on_close))
+def start_receive_thread(client_socket: socket.socket, username: str, on_close=None):
+    t = threading.Thread(
+        target=receive_messages, args=(client_socket, username, on_close)
+    )
     t.daemon = True
     t.start()
+
+

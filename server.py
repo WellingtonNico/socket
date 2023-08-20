@@ -5,6 +5,8 @@ from utils import (
     MESSAGE_TYPE_STRING_DATA,
     PORT,
     ConnectedClient,
+    TextColor,
+    clear_input_line,
     get_decoded_data,
     get_local_ip,
     send_message,
@@ -111,6 +113,10 @@ while True:
 
         while True:
             message = input()
+            clear_input_line()
+            if not message.strip():
+                continue
+            print(f"{TextColor.get_text('[você]',TextColor.CYAN)} - {message}")
             connectedClient.send_message(message)
     except KeyboardInterrupt:
         continue
