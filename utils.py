@@ -59,7 +59,7 @@ def receive_messages(client_socket: socket.socket, username: str):
                 print(f"Encerrando conexão de {username}")
                 client_socket.close()
                 break
-            print(f"Recebido de {username}: {get_decoded_message(data)}")
+            print(f"Mensagem de {username}: {get_decoded_message(data)}")
         except Exception as e:
             print("Erro: ", e)
             break
