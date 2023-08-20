@@ -18,7 +18,7 @@ def get_username():
             return _username
         print(TextColor.get_text('Nome de usuário inválido',TextColor.RED))
 
-server_ip = get_local_ip()[-1]
+server_ip = get_local_ip()
 def get_new_ip():
     while True:
         _server_ip = input(f"Insira um endereço(padrão {server_ip})")

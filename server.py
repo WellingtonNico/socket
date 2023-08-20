@@ -15,7 +15,7 @@ from utils import (
 import threading
 
 
-local_ip = get_local_ip()[-1]
+local_ip = get_local_ip()
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

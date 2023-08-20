@@ -75,8 +75,8 @@ class ConnectedClient:
 def get_local_ip():
     hostname = socket.gethostname()
     ip_list = socket.getaddrinfo(hostname, None, socket.AF_INET)
-    local_ips = [ip[4][0] for ip in ip_list if ip[1] == socket.SOCK_STREAM]
-    return local_ips
+    local_ips = [ip[4][0] for ip in ip_list if ip[1] == socket.SOCK_STREAM and ip[4][0].startswith('192.168.1.')]
+    return local_ips[0]
 
 
 def get_decoded_data(data: bytes) -> MessageData:
@@ -92,7 +92,7 @@ def get_decoded_message(data: bytes):
     return m.message_data
 
 
-def receive_messages(client_socket: socket.socket, username: str, on_close):
+def receive_messages(client_socket: socket.socket, username: str, on_close=None):
     while True:
         try:
             data = client_socket.recv(1024)
