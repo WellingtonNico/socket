@@ -1,3 +1,4 @@
+from ast import List
 import socket
 from utils import (
     MESSAGE_TYPE_IDENTIFICATION,
@@ -25,8 +26,21 @@ server_socket.listen(5)
 is_socket_running = True
 
 connected_clients = []
+connected_clients_lock = threading.Lock()
 
 print("Socket ouvindo em: ", local_ip)
+
+
+def on_close_socket(client_socket: socket.socket):
+    with connected_clients_lock:
+        connectedClient: ConnectedClient
+        for index, connectedClient in enumerate(connected_clients):
+            if connectedClient.client_socket == client_socket:
+                print(
+                    f"Cliente {connectedClient.username} removido dos clientes conectados."
+                )
+                del connected_clients[index]
+                break
 
 
 def wait_for_connections():
@@ -53,7 +67,9 @@ def wait_for_connections():
                             client_address=client_address,
                         )
                     )
-                    start_receive_thread(client_socket, message.message_data)
+                    start_receive_thread(
+                        client_socket, message.message_data, on_close_socket
+                    )
                     break
                 else:
                     send_message(
@@ -79,7 +95,7 @@ while True:
     input("\nPressione ENTER para continuar\n")
 
     if not connected_clients:
-        print('\nAinda não há clientes conectados!')
+        print("\nAinda não há clientes conectados!")
         continue
 
     print("\nSelecione um cliente conectado para enviar uma mensagem:\n")
@@ -87,12 +103,12 @@ while True:
 
     for index, connected_client in enumerate(connected_clients):
         print(index + 1, f"\t -- \t{connected_client.username}")
-    print('\n')
+    print("\n")
     choice = input("digite um número: ")
     try:
-        connectedClient:ConnectedClient = connected_clients[int(choice)-1]
-        print(f'Cliente {connectedClient.username} selecionado, envie uma mensagem:')
+        connectedClient: ConnectedClient = connected_clients[int(choice) - 1]
+        print(f"Cliente {connectedClient.username} selecionado, envie uma mensagem:")
         connectedClient.send_message(input())
-        
+
     except:
-        print('Escolha inválida!')
+        print("Escolha inválida!")

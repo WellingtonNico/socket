@@ -71,13 +71,15 @@ def get_decoded_message(data: bytes):
     return m.message_data
 
 
-def receive_messages(client_socket: socket.socket, username: str):
+def receive_messages(client_socket: socket.socket, username: str,on_close):
     while True:
         try:
             data = client_socket.recv(1024)
             if not data:
                 print(f"Encerrando conexão de {username}")
                 client_socket.close()
+                if on_close is not None and callable(on_close):
+                    on_close(client_socket)
                 break
             print(f"Mensagem de {username}: {get_decoded_message(data)}")
         except Exception as e:
@@ -85,7 +87,7 @@ def receive_messages(client_socket: socket.socket, username: str):
             break
 
 
-def start_receive_thread(client_socket: socket.socket, username: str):
-    t = threading.Thread(target=receive_messages, args=(client_socket, username))
+def start_receive_thread(client_socket: socket.socket, username: str,on_close=None):
+    t = threading.Thread(target=receive_messages, args=(client_socket, username,on_close))
     t.daemon = True
     t.start()
