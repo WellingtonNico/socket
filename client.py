@@ -1,25 +1,26 @@
 import socket
-
 from utils import (
     MESSAGE_TYPE_IDENTIFICATION,
-    MESSAGE_TYPE_STRING_DATA,
     PORT,
     TextColor,
-    clear_input_line,
     get_local_ip,
     send_message,
     start_receive_thread,
     wait_input_and_send_messages,
 )
 
+
 def get_username():
     while True:
         _username = input("Digite seu nome de usuário:\n")
-        if  len(_username.strip())>4:
+        if len(_username.strip()) > 4:
             return _username
-        print(TextColor.get_text('Nome de usuário inválido',TextColor.RED))
+        print(TextColor.get_text("Nome de usuário inválido", TextColor.RED))
+
 
 server_ip = get_local_ip()
+
+
 def get_new_ip():
     while True:
         _server_ip = input(f"Insira um endereço(padrão {server_ip})")
@@ -27,6 +28,7 @@ def get_new_ip():
             return _server_ip
         else:
             return None
+
 
 username = get_username()
 
@@ -45,7 +47,6 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(address)
 
 send_message(client_socket, MESSAGE_TYPE_IDENTIFICATION, username)
-# Start a separate thread for receiving messages
 
 start_receive_thread(client_socket, "servidor")
 
