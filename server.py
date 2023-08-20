@@ -1,12 +1,10 @@
-from ast import List
 import socket
+from typing import List
 from utils import (
-    MESSAGE_TYPE_IDENTIFICATION,
     MESSAGE_TYPE_STRING_DATA,
     PORT,
     ConnectedClient,
     TextColor,
-    clear_input_line,
     get_decoded_data,
     get_local_ip,
     send_message,
@@ -28,7 +26,7 @@ server_socket.listen(5)
 
 is_socket_running = False
 
-connected_clients = []
+connected_clients:List[ConnectedClient] = []
 connected_clients_lock = threading.Lock()
 
 print(TextColor.get_text(f"Socket ouvindo em: {local_ip}", TextColor.GREEN))
@@ -36,7 +34,6 @@ print(TextColor.get_text(f"Socket ouvindo em: {local_ip}", TextColor.GREEN))
 
 def on_close_socket(client_socket: socket.socket):
     with connected_clients_lock:
-        connectedClient: ConnectedClient
         for index, connectedClient in enumerate(connected_clients):
             if connectedClient.client_socket == client_socket:
                 print(
@@ -114,7 +111,6 @@ while True:
         continue
 
     print("\nSelecione um cliente conectado para enviar uma mensagem:\n")
-    connected_client: ConnectedClient
 
     for index, connected_client in enumerate(connected_clients):
         print(
