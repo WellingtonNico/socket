@@ -34,12 +34,12 @@ while True:
             if not data:
                 print("Cliente saiu sem se identificar...")
                 client_socket.close()
-            data = get_decoded_data(data)
-            if data["message_type"] == MESSAGE_TYPE_IDENTIFICATION:
+            message = get_decoded_data(data)
+            if message.is_identification:
                 print(
-                    f'Usuário {data["message_data"]} identificado em {client_address}, iniciando recebimento de mensagens...'
+                    f"Usuário {message.message_data} identificado em {client_address}, iniciando recebimento de mensagens..."
                 )
-                start_receive_thread(client_socket, data["message_data"])
+                start_receive_thread(client_socket, message.message_data)
                 break
             else:
                 send_message(
@@ -47,7 +47,8 @@ while True:
                     MESSAGE_TYPE_STRING_DATA,
                     "Por gentileza, envie sua identificação",
                 )
-    except:
+    except Exception as e:
+        print(e)
         break
 
 print("Encerrando servidor...")

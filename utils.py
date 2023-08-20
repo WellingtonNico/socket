@@ -9,6 +9,20 @@ MESSAGE_TYPE_JSON_DATA = 1
 MESSAGE_TYPE_STRING_DATA = 2
 
 
+class MessageData:
+    message_type: int
+    message_data: str | dict | list
+
+    def __init__(self, message_type, message_data) -> None:
+        self.message_data = message_data
+        self.message_type = message_type
+        pass
+
+    @property
+    def is_identification(self):
+        return self.message_type == MESSAGE_TYPE_IDENTIFICATION
+
+
 def get_local_ip():
     hostname = socket.gethostname()
     ip_list = socket.getaddrinfo(hostname, None, socket.AF_INET)
@@ -16,17 +30,25 @@ def get_local_ip():
     return local_ips
 
 
-def get_decoded_data(data: bytes):
-    return json.loads(data.decode())
+def get_decoded_data(data: bytes) -> MessageData:
+    decodedData = json.loads(data.decode())
+    return MessageData(
+        message_data=decodedData["message_data"],
+        message_type=decodedData["message_type"],
+    )
 
 
 def get_decoded_message(data: bytes):
-    messageDict = get_decoded_data(data)
-    return messageDict["message_data"]
+    m = get_decoded_data(data)
+    return m.message_data
 
 
 def send_message(client_socket: socket.socket, message_type, message_data):
-    client_socket.send(json.dumps({"message_type": message_type, "message_data": message_data}).encode())
+    client_socket.send(
+        json.dumps(
+            {"message_type": message_type, "message_data": message_data}
+        ).encode()
+    )
 
 
 def receive_messages(client_socket: socket.socket, username: str):
