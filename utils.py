@@ -3,6 +3,7 @@ import json
 import socket
 import threading
 from typing import Any
+from datetime import datetime
 
 PORT = 4040
 
@@ -92,13 +93,16 @@ def get_decoded_message(data: bytes):
     return m.message_data
 
 
+def get_now_str():
+    return datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+
 def wait_input_and_send_messages(client_socket: socket.socket):
     while True:
         message = input()
         clear_input_line()
         if not message.strip():
             continue
-        print(f"{TextColor.get_text('[você]',TextColor.CYAN)} - {message}")
+        print(f"{TextColor.get_text(f'[{get_now_str()} - você]',TextColor.CYAN)} - {message}")
         send_message(client_socket, MESSAGE_TYPE_STRING_DATA, message)
 
 
@@ -117,7 +121,7 @@ def receive_messages(client_socket: socket.socket, username: str, on_close=None)
                     on_close(client_socket)
                 break
             print(
-                f"{TextColor.get_text(f'[{username}]',TextColor.YELLOW)} - {get_decoded_message(data)}"
+                f"{TextColor.get_text(f'[{get_now_str()} - {username}]',TextColor.YELLOW)} - {get_decoded_message(data)}"
             )
         except Exception as e:
             print("Erro: ", e)
